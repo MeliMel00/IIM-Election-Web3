@@ -1,23 +1,23 @@
 import { ethers } from "ethers";
-import abi from "../../../back-end/artifacts/contracts/Election.sol/Election.json";
-
-const CONTRACT_ADDRESS = "0x51a5cAB8ECa35D75f3140980eDd4E400C47169c0";
+// import abi from "../../../back-end/artifacts/contracts/Election.sol/Election.json";
+import abi from "../abi/Election.json"
+const CONTRACT_ADDRESS = "0xAf5CB0CCb8e45e65239344d1d202D3A2b0D61Ba7";
 
 export function getContract(signerOrProvider) {
   return new ethers.Contract(CONTRACT_ADDRESS, abi.abi, signerOrProvider);
 }
 
-export async function getRegisteredVoters(provider) {
-    const contract = getContract(provider);
-    const addresses = await contract.getAllRegisteredVoters();
+export async function getRegisteredVoters(providerOrSigner) {
+    const contract = getContract(providerOrSigner);
+    const addresses = await contract.getRegisteredVoters();
   
     const voters = await Promise.all(
       addresses.map(async (addr) => {
-        const voter = await contract.getVoter(addr);
+        const voter = await contract.voters(addr);
         return {
           address: addr,
           name: voter.name,
-          voted: voter.hasVoted,
+          voted: voter.voted,
         };
       })
     );
